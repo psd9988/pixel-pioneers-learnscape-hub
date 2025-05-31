@@ -1,9 +1,16 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { 
   Play, 
   Clock, 
@@ -22,7 +29,10 @@ import {
   Video,
   Download,
   ExternalLink,
-  User
+  User,
+  UserCheck,
+  UserX,
+  AlertCircle
 } from 'lucide-react';
 
 const CourseDetail = () => {
@@ -235,6 +245,89 @@ const CourseDetail = () => {
         date: 'Tomorrow, 11:59 PM',
         type: 'Assignment'
       }
+    ],
+    // New attendance data
+    attendanceHistory: [
+      {
+        id: 'class-1',
+        title: 'Course Introduction & Python Setup',
+        date: 'March 16, 2024',
+        time: '2:00 PM - 3:30 PM',
+        type: 'Live Lecture',
+        status: 'present',
+        instructor: 'Charles Russell Severance',
+        topic: 'Introduction to Programming Concepts',
+        recording: 'Available'
+      },
+      {
+        id: 'class-2',
+        title: 'Variables and Data Types',
+        date: 'March 18, 2024',
+        time: '2:00 PM - 3:30 PM',
+        type: 'Live Lecture',
+        status: 'present',
+        instructor: 'Charles Russell Severance',
+        topic: 'Python Fundamentals',
+        recording: 'Available'
+      },
+      {
+        id: 'class-3',
+        title: 'Control Structures Workshop',
+        date: 'March 20, 2024',
+        time: '2:00 PM - 4:00 PM',
+        type: 'Workshop',
+        status: 'absent',
+        instructor: 'Teaching Assistant',
+        topic: 'If-else and Loops',
+        recording: 'Available',
+        reason: 'Sick leave'
+      },
+      {
+        id: 'class-4',
+        title: 'Functions and Modules',
+        date: 'March 23, 2024',
+        time: '2:00 PM - 3:30 PM',
+        type: 'Live Lecture',
+        status: 'present',
+        instructor: 'Charles Russell Severance',
+        topic: 'Functions Deep Dive',
+        recording: 'Available'
+      },
+      {
+        id: 'class-5',
+        title: 'Data Structures Overview',
+        date: 'March 25, 2024',
+        time: '2:00 PM - 3:30 PM',
+        type: 'Live Lecture',
+        status: 'late',
+        instructor: 'Charles Russell Severance',
+        topic: 'Lists and Dictionaries',
+        recording: 'Available',
+        joinedAt: '2:15 PM'
+      },
+      {
+        id: 'class-6',
+        title: 'Hands-on Coding Session',
+        date: 'March 27, 2024',
+        time: '2:00 PM - 4:00 PM',
+        type: 'Practical Session',
+        status: 'present',
+        instructor: 'Teaching Assistant',
+        topic: 'String Manipulation Exercises',
+        recording: 'Available'
+      },
+      {
+        id: 'class-7',
+        title: 'File Operations & Error Handling',
+        date: 'March 30, 2024',
+        time: '2:00 PM - 3:30 PM',
+        type: 'Live Lecture',
+        status: 'excused',
+        instructor: 'Charles Russell Severance',
+        topic: 'Working with Files',
+        recording: 'Available',
+        reason: 'Pre-approved absence'
+      }
     ]
   };
 
@@ -284,6 +377,36 @@ const CourseDetail = () => {
       case 'article': return FileText;
       default: return FileText;
     }
+  };
+
+  const getAttendanceIcon = (status: string) => {
+    switch (status) {
+      case 'present': return UserCheck;
+      case 'absent': return UserX;
+      case 'late': return AlertCircle;
+      case 'excused': return User;
+      default: return User;
+    }
+  };
+
+  const getAttendanceColor = (status: string) => {
+    switch (status) {
+      case 'present': return 'text-green-600 bg-green-50 dark:bg-green-950 dark:text-green-400';
+      case 'absent': return 'text-red-600 bg-red-50 dark:bg-red-950 dark:text-red-400';
+      case 'late': return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950 dark:text-yellow-400';
+      case 'excused': return 'text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400';
+      default: return 'text-gray-600 bg-gray-50 dark:bg-gray-950 dark:text-gray-400';
+    }
+  };
+
+  const getAttendanceStats = () => {
+    const total = course.attendanceHistory.length;
+    const present = course.attendanceHistory.filter(c => c.status === 'present').length;
+    const late = course.attendanceHistory.filter(c => c.status === 'late').length;
+    const absent = course.attendanceHistory.filter(c => c.status === 'absent').length;
+    const excused = course.attendanceHistory.filter(c => c.status === 'excused').length;
+    
+    return { total, present, late, absent, excused };
   };
 
   return (
@@ -421,7 +544,7 @@ const CourseDetail = () => {
           <Tabs defaultValue="curriculum" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="curriculum">Curriculum</TabsTrigger>
-              <TabsTrigger value="discussions">Discussions</TabsTrigger>
+              <TabsTrigger value="attendance">Attendance</TabsTrigger>
             </TabsList>
             
             <TabsContent value="curriculum" className="mt-6">
@@ -551,12 +674,103 @@ const CourseDetail = () => {
               </div>
             </TabsContent>
             
-            <TabsContent value="discussions" className="mt-6">
-              <div className="text-center py-12">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-heading font-semibold text-lg mb-2">Course Discussions</h3>
-                <p className="text-muted-foreground">Connect with your batch mates and instructors</p>
-                <Button className="mt-4 pixel-button-primary">Join Discussion</Button>
+            <TabsContent value="attendance" className="mt-6">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-heading font-bold text-2xl">Attendance Record</h2>
+                  <div className="text-sm text-muted-foreground">
+                    Total Classes: {getAttendanceStats().total}
+                  </div>
+                </div>
+
+                {/* Attendance Summary */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                    <UserCheck className="w-6 h-6 text-green-600 mx-auto mb-2" />
+                    <div className="font-bold text-lg text-green-600">{getAttendanceStats().present}</div>
+                    <div className="text-sm text-green-600">Present</div>
+                  </div>
+                  <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-950 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <AlertCircle className="w-6 h-6 text-yellow-600 mx-auto mb-2" />
+                    <div className="font-bold text-lg text-yellow-600">{getAttendanceStats().late}</div>
+                    <div className="text-sm text-yellow-600">Late</div>
+                  </div>
+                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <User className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                    <div className="font-bold text-lg text-blue-600">{getAttendanceStats().excused}</div>
+                    <div className="text-sm text-blue-600">Excused</div>
+                  </div>
+                  <div className="text-center p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+                    <UserX className="w-6 h-6 text-red-600 mx-auto mb-2" />
+                    <div className="font-bold text-lg text-red-600">{getAttendanceStats().absent}</div>
+                    <div className="text-sm text-red-600">Absent</div>
+                  </div>
+                </div>
+
+                {/* Attendance Table */}
+                <div className="border border-border rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Class Details</TableHead>
+                        <TableHead>Date & Time</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Instructor</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Recording</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {course.attendanceHistory.map((classItem) => {
+                        const StatusIcon = getAttendanceIcon(classItem.status);
+                        return (
+                          <TableRow key={classItem.id}>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{classItem.title}</div>
+                                <div className="text-sm text-muted-foreground">{classItem.topic}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{classItem.date}</div>
+                                <div className="text-sm text-muted-foreground">{classItem.time}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <span className="inline-flex items-center px-2 py-1 text-xs rounded-full bg-muted">
+                                {classItem.type}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-sm">{classItem.instructor}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                <span className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getAttendanceColor(classItem.status)}`}>
+                                  <StatusIcon className="w-3 h-3 mr-1" />
+                                  {classItem.status.charAt(0).toUpperCase() + classItem.status.slice(1)}
+                                </span>
+                              </div>
+                              {(classItem.reason || classItem.joinedAt) && (
+                                <div className="text-xs text-muted-foreground mt-1">
+                                  {classItem.reason && `Reason: ${classItem.reason}`}
+                                  {classItem.joinedAt && `Joined at: ${classItem.joinedAt}`}
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {classItem.recording && (
+                                <Button variant="outline" size="sm" className="h-8">
+                                  <Video className="w-3 h-3 mr-1" />
+                                  Watch
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
