@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '@/components/Layout';
 import CourseCard from '@/components/CourseCard';
@@ -60,21 +59,38 @@ const Dashboard = () => {
   const upcomingClasses = [
     {
       course: 'Python for Everybody',
-      lesson: 'Module 4: Functions and Data Structures',
+      title: 'Module 4: Functions and Data Structures',
+      type: 'Live Session',
       time: 'Today, 2:00 PM',
-      type: 'Live Session'
+      instructor: 'Dr. Charles Severance'
     },
     {
       course: 'React Web Development', 
-      lesson: 'Assignment: Build a Todo App',
+      title: 'Building Interactive Components',
+      type: 'Live Session',
       time: 'Tomorrow, 11:00 AM',
-      type: 'Assignment Due'
+      instructor: 'Sarah Johnson'
+    },
+    {
+      course: 'Python for Everybody',
+      title: 'Assignment: Build a Calculator',
+      type: 'Assignment Due',
+      time: 'Tomorrow, 11:59 PM',
+      instructor: 'Dr. Charles Severance'
     },
     {
       course: 'Data Science Fundamentals',
-      lesson: 'Module 2: Data Visualization',
+      title: 'Module 2: Data Visualization',
+      type: 'Live Session',
       time: 'Friday, 3:30 PM',
-      type: 'Live Session'
+      instructor: 'Prof. Maria Garcia'
+    },
+    {
+      course: 'React Web Development',
+      title: 'Quiz: React Hooks Assessment',
+      type: 'Assessment Due',
+      time: 'Saturday, 6:00 PM',
+      instructor: 'Sarah Johnson'
     }
   ];
 
@@ -87,6 +103,10 @@ const Dashboard = () => {
 
   const handleCourseClick = (courseId: string) => {
     window.location.href = `/course/${courseId}`;
+  };
+
+  const handleViewSchedule = () => {
+    window.location.href = '/schedule';
   };
 
   return (
@@ -170,15 +190,20 @@ const Dashboard = () => {
               <div className="space-y-4">
                 {upcomingClasses.map((item, index) => (
                   <div key={index} className="border-l-2 border-pixel-purple/30 pl-4 py-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-sm">{item.course}</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-sm text-muted-foreground">{item.course}</span>
                       <span className={`pixel-chip text-xs ${
-                        item.type === 'Live Session' ? 'bg-pixel-green/10 text-pixel-green' : 'bg-pixel-orange/10 text-pixel-orange'
+                        item.type === 'Live Session' 
+                          ? 'bg-pixel-green/10 text-pixel-green border-pixel-green/20' 
+                          : item.type === 'Assignment Due'
+                          ? 'bg-pixel-orange/10 text-pixel-orange border-pixel-orange/20'
+                          : 'bg-pixel-blue/10 text-pixel-blue border-pixel-blue/20'
                       }`}>
                         {item.type}
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-1">{item.lesson}</p>
+                    <h4 className="font-medium text-sm mb-1">{item.title}</h4>
+                    <p className="text-xs text-muted-foreground mb-1">by {item.instructor}</p>
                     <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                       <Clock className="w-3 h-3" />
                       <span>{item.time}</span>
@@ -187,7 +212,7 @@ const Dashboard = () => {
                 ))}
               </div>
               
-              <Button variant="outline" className="w-full mt-4">
+              <Button variant="outline" className="w-full mt-4" onClick={handleViewSchedule}>
                 View Full Schedule
               </Button>
             </div>
