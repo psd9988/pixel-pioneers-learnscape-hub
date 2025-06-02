@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,30 +12,30 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, title, breadcrumbs }: LayoutProps) => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar 
-        collapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-      />
-      
-      <TopBar 
-        title={title}
-        breadcrumbs={breadcrumbs}
-        sidebarCollapsed={sidebarCollapsed}
-      />
-      
-      <main className={`
-        pt-16 transition-all duration-300
-        ${sidebarCollapsed ? 'ml-16' : 'ml-64'}
-      `}>
-        <div className="p-6">
-          {children}
-        </div>
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen w-full flex">
+        <Sidebar 
+          collapsed={false} 
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
+        
+        <SidebarInset className="flex-1">
+          <TopBar 
+            title={title}
+            breadcrumbs={breadcrumbs}
+            sidebarCollapsed={false}
+          />
+          
+          <main className="flex-1 p-4 md:p-6 pt-20 md:pt-24">
+            {children}
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 

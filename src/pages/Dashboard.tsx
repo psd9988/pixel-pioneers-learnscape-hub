@@ -3,6 +3,7 @@ import Layout from '@/components/Layout';
 import CourseCard from '@/components/CourseCard';
 import { Calendar, Clock, TrendingUp, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const Dashboard = () => {
   const activeCourses = [
@@ -62,35 +63,40 @@ const Dashboard = () => {
       title: 'Module 4: Functions and Data Structures',
       type: 'Live Session',
       time: 'Today, 2:00 PM',
-      instructor: 'Dr. Charles Severance'
+      instructor: 'Dr. Charles Severance',
+      category: 'class'
     },
     {
       course: 'React Web Development', 
       title: 'Building Interactive Components',
       type: 'Live Session',
       time: 'Tomorrow, 11:00 AM',
-      instructor: 'Sarah Johnson'
+      instructor: 'Sarah Johnson',
+      category: 'class'
     },
     {
       course: 'Python for Everybody',
       title: 'Assignment: Build a Calculator',
       type: 'Assignment Due',
       time: 'Tomorrow, 11:59 PM',
-      instructor: 'Dr. Charles Severance'
+      instructor: 'Dr. Charles Severance',
+      category: 'assignment'
     },
     {
       course: 'Data Science Fundamentals',
       title: 'Module 2: Data Visualization',
       type: 'Live Session',
       time: 'Friday, 3:30 PM',
-      instructor: 'Prof. Maria Garcia'
+      instructor: 'Prof. Maria Garcia',
+      category: 'class'
     },
     {
       course: 'React Web Development',
       title: 'Quiz: React Hooks Assessment',
       type: 'Assessment Due',
       time: 'Saturday, 6:00 PM',
-      instructor: 'Sarah Johnson'
+      instructor: 'Sarah Johnson',
+      category: 'assessment'
     }
   ];
 
@@ -109,64 +115,61 @@ const Dashboard = () => {
     window.location.href = '/schedule';
   };
 
+  const getBadgeVariant = (type: string) => {
+    switch (type) {
+      case 'Live Session':
+        return 'default';
+      case 'Assignment Due':
+        return 'destructive';
+      case 'Assessment Due':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
+
   return (
     <Layout title="Dashboard">
-      <div className="space-y-8 animate-fade-in">
+      <div className="space-y-6 md:space-y-8 animate-fade-in">
         {/* Welcome Section */}
         <div className="pixel-card bg-gradient-to-r from-pixel-purple/10 to-pixel-blue/10 border-pixel-purple/20">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div>
-              <h2 className="font-heading font-bold text-2xl mb-2">
+              <h2 className="font-heading font-bold text-xl md:text-2xl mb-2">
                 Welcome back, Alex! 👋
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-sm md:text-base">
                 Ready to continue your learning journey? You're doing great!
               </p>
             </div>
-            <div className="hidden md:flex items-center space-x-6 text-center">
+            <div className="grid grid-cols-3 lg:flex lg:items-center lg:space-x-6 gap-4 lg:gap-0 text-center">
               <div>
-                <div className="text-2xl font-bold text-pixel-purple">{overallStats.totalCourses}</div>
-                <div className="text-sm text-muted-foreground">Active Courses</div>
+                <div className="text-xl md:text-2xl font-bold text-pixel-purple">{overallStats.totalCourses}</div>
+                <div className="text-xs md:text-sm text-muted-foreground">Active Courses</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-pixel-green">{overallStats.avgProgress}%</div>
-                <div className="text-sm text-muted-foreground">Avg Progress</div>
+                <div className="text-xl md:text-2xl font-bold text-pixel-green">{overallStats.avgProgress}%</div>
+                <div className="text-xs md:text-sm text-muted-foreground">Avg Progress</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-pixel-orange">{overallStats.avgAttendance}%</div>
-                <div className="text-sm text-muted-foreground">Attendance</div>
+                <div className="text-xl md:text-2xl font-bold text-pixel-orange">{overallStats.avgAttendance}%</div>
+                <div className="text-xs md:text-sm text-muted-foreground">Attendance</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Quick Stats - Mobile */}
-        <div className="grid grid-cols-3 gap-4 md:hidden">
-          <div className="pixel-card text-center">
-            <div className="text-xl font-bold text-pixel-purple mb-1">{overallStats.totalCourses}</div>
-            <div className="text-xs text-muted-foreground">Courses</div>
-          </div>
-          <div className="pixel-card text-center">
-            <div className="text-xl font-bold text-pixel-green mb-1">{overallStats.avgProgress}%</div>
-            <div className="text-xs text-muted-foreground">Progress</div>
-          </div>
-          <div className="pixel-card text-center">
-            <div className="text-xl font-bold text-pixel-orange mb-1">{overallStats.avgAttendance}%</div>
-            <div className="text-xs text-muted-foreground">Attendance</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
           {/* Main Content - Courses */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="xl:col-span-2 space-y-6">
             {/* Continue Learning Section */}
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-heading font-bold text-xl">Continue Learning</h2>
-                <Button variant="outline" size="sm">View All Courses</Button>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6 space-y-2 sm:space-y-0">
+                <h2 className="font-heading font-bold text-lg md:text-xl">Continue Learning</h2>
+                <Button variant="outline" size="sm" className="self-start sm:self-auto">View All Courses</Button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 {activeCourses.map((course) => (
                   <CourseCard
                     key={course.id}
@@ -184,28 +187,24 @@ const Dashboard = () => {
             <div className="pixel-card">
               <div className="flex items-center space-x-2 mb-4">
                 <Calendar className="w-5 h-5 text-pixel-purple" />
-                <h3 className="font-heading font-semibold text-lg">Upcoming</h3>
+                <h3 className="font-heading font-semibold text-base md:text-lg">Upcoming</h3>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {upcomingClasses.map((item, index) => (
-                  <div key={index} className="border-l-2 border-pixel-purple/30 pl-4 py-2">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-sm text-muted-foreground">{item.course}</span>
-                      <span className={`pixel-chip text-xs ${
-                        item.type === 'Live Session' 
-                          ? 'bg-pixel-green/10 text-pixel-green border-pixel-green/20' 
-                          : item.type === 'Assignment Due'
-                          ? 'bg-pixel-orange/10 text-pixel-orange border-pixel-orange/20'
-                          : 'bg-pixel-blue/10 text-pixel-blue border-pixel-blue/20'
-                      }`}>
-                        {item.type}
+                  <div key={index} className="border-l-2 border-pixel-purple/30 pl-3 md:pl-4 py-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-1 sm:space-y-0">
+                      <span className="font-medium text-xs md:text-sm text-muted-foreground truncate">
+                        {item.course}
                       </span>
+                      <Badge variant={getBadgeVariant(item.type)} className="text-xs self-start sm:self-auto">
+                        {item.type}
+                      </Badge>
                     </div>
-                    <h4 className="font-medium text-sm mb-1">{item.title}</h4>
+                    <h4 className="font-medium text-sm mb-1 line-clamp-2">{item.title}</h4>
                     <p className="text-xs text-muted-foreground mb-1">by {item.instructor}</p>
                     <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="w-3 h-3 flex-shrink-0" />
                       <span>{item.time}</span>
                     </div>
                   </div>
@@ -221,11 +220,11 @@ const Dashboard = () => {
             <div className="pixel-card">
               <div className="flex items-center space-x-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-pixel-orange" />
-                <h3 className="font-heading font-semibold text-lg">Learning Streak</h3>
+                <h3 className="font-heading font-semibold text-base md:text-lg">Learning Streak</h3>
               </div>
               
               <div className="text-center">
-                <div className="text-3xl font-bold text-pixel-orange mb-2">7</div>
+                <div className="text-2xl md:text-3xl font-bold text-pixel-orange mb-2">7</div>
                 <p className="text-sm text-muted-foreground mb-4">
                   Days in a row! Keep it up! 🔥
                 </p>
@@ -234,7 +233,7 @@ const Dashboard = () => {
                   {[...Array(7)].map((_, i) => (
                     <div
                       key={i}
-                      className={`w-6 h-6 rounded-full ${
+                      className={`w-5 h-5 md:w-6 md:h-6 rounded-full ${
                         i < 7 ? 'bg-pixel-orange' : 'bg-muted'
                       }`}
                     />
@@ -251,20 +250,20 @@ const Dashboard = () => {
             <div className="pixel-card">
               <div className="flex items-center space-x-2 mb-4">
                 <BookOpen className="w-5 h-5 text-pixel-blue" />
-                <h3 className="font-heading font-semibold text-lg">Quick Actions</h3>
+                <h3 className="font-heading font-semibold text-base md:text-lg">Quick Actions</h3>
               </div>
               
-              <div className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+              <div className="space-y-2 md:space-y-3">
+                <Button variant="outline" className="w-full justify-start text-sm">
                   📚 Browse New Courses
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start text-sm">
                   📖 Study Notes
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start text-sm">
                   🏆 View Achievements
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start text-sm">
                   📊 Progress Reports
                 </Button>
               </div>
