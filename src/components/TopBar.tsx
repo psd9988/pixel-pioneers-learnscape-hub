@@ -4,6 +4,7 @@ import { Bell, Search, User, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import ThemeToggle from './ThemeToggle';
 
 interface TopBarProps {
   title: string;
@@ -46,6 +47,8 @@ const TopBar = ({ title, breadcrumbs, sidebarCollapsed }: TopBarProps) => {
           <Button variant="ghost" size="sm" className="p-2 md:hidden">
             <Search className="w-5 h-5" />
           </Button>
+          
+          <ThemeToggle />
           
           <Button variant="ghost" size="sm" className="p-2">
             <Bell className="w-5 h-5" />
