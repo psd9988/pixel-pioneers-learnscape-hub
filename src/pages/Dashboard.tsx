@@ -1,109 +1,76 @@
+
 import React from 'react';
 import Layout from '@/components/Layout';
 import CourseCard from '@/components/CourseCard';
 import { Calendar, Clock, TrendingUp, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useStudentCourses } from '@/hooks/useStudentCourses';
 
 const Dashboard = () => {
-  const activeCourses = [
-    {
-      id: '1',
-      title: 'Python for Everybody',
-      description: 'Learn the basics of programming computers using Python. Cover the basics of how to construct a program.',
-      instructor: 'University of Michigan',
-      progress: 65,
-      attendance: 89,
-      totalLessons: 45,
-      completedLessons: 29,
-      category: 'Programming',
-      isActive: true
-    },
-    {
-      id: '2',
-      title: 'React Web Development',
-      description: 'Build modern web applications with React, hooks, and state management.',
-      instructor: 'Meta',
-      progress: 42,
-      attendance: 75,
-      totalLessons: 32,
-      completedLessons: 13,
-      category: 'Web Development',
-      isActive: true
-    },
-    {
-      id: '3',
-      title: 'Data Science Fundamentals',
-      description: 'Introduction to data analysis, visualization, and machine learning concepts.',
-      instructor: 'IBM',
-      progress: 23,
-      attendance: 92,
-      totalLessons: 28,
-      completedLessons: 6,
-      category: 'Data Science',
-      isActive: true
-    },
-    {
-      id: '4',
-      title: 'JavaScript Algorithms',
-      description: 'Master algorithmic thinking and problem-solving with JavaScript.',
-      instructor: 'FreeCodeCamp',
-      progress: 88,
-      attendance: 96,
-      totalLessons: 24,
-      completedLessons: 21,
-      category: 'Programming',
-      isActive: true
-    }
-  ];
+  const { data: studentCourses, isLoading, error } = useStudentCourses();
+
+  // Transform API data to match CourseCard props
+  const transformCourseData = (apiCourse: any) => ({
+    id: apiCourse.id.toString(),
+    title: apiCourse.name,
+    description: `${apiCourse.bootcampTopic || 'Programming'} course in ${apiCourse.language || 'English'}`,
+    instructor: apiCourse.batchName,
+    progress: apiCourse.progress,
+    attendance: Math.floor(Math.random() * 20) + 80, // Mock attendance data
+    totalLessons: Math.floor(Math.random() * 30) + 20, // Mock lesson count
+    completedLessons: Math.floor((apiCourse.progress / 100) * (Math.floor(Math.random() * 30) + 20)),
+    category: apiCourse.bootcampTopic || 'Programming',
+    isActive: apiCourse.progress < 100,
+    image: apiCourse.coverImage
+  });
+
+  const activeCourses = studentCourses ? studentCourses.filter(course => course.progress < 100).map(transformCourseData) : [];
 
   const upcomingClasses = [
     {
-      course: 'Python for Everybody',
+      course: activeCourses[0]?.title || 'JavaScript & React',
       title: 'Module 4: Functions and Data Structures',
       type: 'Live Session',
       time: 'Today, 2:00 PM',
-      instructor: 'Dr. Charles Severance',
+      instructor: activeCourses[0]?.instructor || 'Dr. Charles Severance',
       category: 'class'
     },
     {
-      course: 'React Web Development', 
+      course: activeCourses[1]?.title || 'JavaScript Course', 
       title: 'Building Interactive Components',
       type: 'Live Session',
       time: 'Tomorrow, 11:00 AM',
-      instructor: 'Sarah Johnson',
+      instructor: activeCourses[1]?.instructor || 'Sarah Johnson',
       category: 'class'
     },
     {
-      course: 'Python for Everybody',
+      course: activeCourses[0]?.title || 'JavaScript & React',
       title: 'Assignment: Build a Calculator',
       type: 'Assignment Due',
       time: 'Tomorrow, 11:59 PM',
-      instructor: 'Dr. Charles Severance',
+      instructor: activeCourses[0]?.instructor || 'Dr. Charles Severance',
       category: 'assignment'
     },
     {
-      course: 'Data Science Fundamentals',
+      course: activeCourses[2]?.title || 'Testing Module',
       title: 'Module 2: Data Visualization',
-      type: 'Live Session',
-      time: 'Friday, 3:30 PM',
-      instructor: 'Prof. Maria Garcia',
-      category: 'class'
-    },
-    {
-      course: 'React Web Development',
-      title: 'Quiz: React Hooks Assessment',
       type: 'Assessment Due',
-      time: 'Saturday, 6:00 PM',
-      instructor: 'Sarah Johnson',
+      time: 'Friday, 3:30 PM',
+      instructor: activeCourses[2]?.instructor || 'Prof. Maria Garcia',
       category: 'assessment'
     }
   ];
 
-  const overallStats = {
-    totalCourses: 4,
-    completedCourses: 1,
-    avgProgress: 54,
+  const overallStats = studentCourses ? {
+    totalCourses: studentCourses.length,
+    completedCourses: studentCourses.filter(course => course.progress === 100).length,
+    avgProgress: Math.round(studentCourses.reduce((acc, course) => acc + course.progress, 0) / studentCourses.length),
+    avgAttendance: 88
+  } : {
+    totalCourses: 0,
+    completedCourses: 0,
+    avgProgress: 0,
     avgAttendance: 88
   };
 
@@ -127,6 +94,43 @@ const Dashboard = () => {
         return 'outline';
     }
   };
+
+  if (isLoading) {
+    return (
+      <Layout title="Dashboard">
+        <div className="space-y-6 md:space-y-8 animate-fade-in">
+          <div className="pixel-card">
+            <div className="animate-pulse">
+              <div className="h-4 bg-muted rounded w-1/4 mb-4"></div>
+              <div className="h-8 bg-muted rounded w-1/2"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="pixel-card animate-pulse">
+                <div className="h-48 bg-muted rounded mb-4"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout title="Dashboard">
+        <div className="pixel-card text-center py-12">
+          <h3 className="font-heading font-semibold text-lg mb-2 text-destructive">Error loading courses</h3>
+          <p className="text-muted-foreground">Failed to load your course data. Please try again later.</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout title="Dashboard">
@@ -169,15 +173,23 @@ const Dashboard = () => {
                 <Button variant="outline" size="sm" className="self-start sm:self-auto">View All Courses</Button>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                {activeCourses.map((course) => (
-                  <CourseCard
-                    key={course.id}
-                    {...course}
-                    onClick={() => handleCourseClick(course.id)}
-                  />
-                ))}
-              </div>
+              {activeCourses.length > 0 ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                  {activeCourses.map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      {...course}
+                      onClick={() => handleCourseClick(course.id)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="pixel-card text-center py-12">
+                  <h3 className="font-heading font-semibold text-lg mb-2">No active courses</h3>
+                  <p className="text-muted-foreground mb-4">Start a new course to begin your learning journey!</p>
+                  <Button>Browse Courses</Button>
+                </div>
+              )}
             </div>
           </div>
 

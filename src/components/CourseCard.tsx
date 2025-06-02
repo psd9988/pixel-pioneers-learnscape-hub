@@ -12,7 +12,7 @@ interface CourseCardProps {
   attendance: number;
   totalLessons: number;
   completedLessons: number;
-  image?: string;
+  image?: string | null;
   category: string;
   isActive: boolean;
   onClick: () => void;
@@ -28,13 +28,25 @@ const CourseCard = ({
   completedLessons,
   category,
   isActive,
+  image,
   onClick
 }: CourseCardProps) => {
   return (
     <div className="pixel-card hover:shadow-pixel-lg transition-all duration-300 cursor-pointer group" onClick={onClick}>
       {/* Course Image/Thumbnail */}
-      <div className="w-full h-48 bg-gradient-to-br from-pixel-purple to-pixel-blue rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-        <Play className="w-12 h-12 text-white opacity-80" />
+      <div className="w-full h-48 bg-gradient-to-br from-pixel-purple to-pixel-blue rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+        {image ? (
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        <Play className={`w-12 h-12 text-white opacity-80 ${image ? 'absolute' : ''}`} />
       </div>
 
       {/* Course Info */}
